@@ -1,0 +1,11 @@
+models*/*/*/*pkl
+models*/*/*
+*/models*/*/*/*pkl
+*/models*/*/*
+*/models/*
+!.gitignore
+.vscode/**
+.git/**
+.DS_Store
+*/__pycache__
+Baselines/checkpoint/*

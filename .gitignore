@@ -1,0 +1,44 @@
+data/*
+# UFSLviaIC/models_mn/*/*/*pkl
+# UFSLviaIC/models_mn/*/*
+# !UFSLviaIC/models_mn/*/*finished*
+
+# UFSLviaIC/my_MN/models_mn/*/*/*pkl
+# UFSLviaIC/my_MN/models_mn/*/*
+# !UFSLviaIC/my_MN/models_mn/*/*finished*
+
+# UFSLviaIC/models_pn/*/*/*pkl
+# UFSLviaIC/models_pn/*/*
+# !UFSLviaIC/models_pn/*/*finished*
+# LearningToCompare_FSL
+# MatchingNetworks
+# prototypical-networks
+
+# UFSLviaIC/models_baseline/*/*/*pkl
+# UFSLviaIC/models_baseline/*/*
+# !UFSLviaIC/models_baseline/*/*finished*
+
+# UFSLviaIC/models_abl/*/*/*pkl
+# UFSLviaIC/models_abl/*/*
+# !UFSLviaIC/models_abl/*/*finished*
+
+*/models*/*/*/*pkl
+*/models*/*/*
+*/*/models*/*/*/*pkl
+*/*/models*/*/*
+*/*/models/*
+UFSLviaIC/IC/IC_model/*
+UFSLviaIC/Baselines/checkpoint/*
+UFSLviaIC/IC/IC_result/*
+!.gitignore
+.vscode/**
+.git/**
+.DS_Store
+*/*/__pycache__
+plot/fsl/*
+# UFSLviaIC/models_baseline/*/*/
+# UFSLviaIC/models_baseline/*/*
+# !UFSLviaIC/models_baseline/*/*finished*
+# UFSLviaIC/models_abl/*/*/*pkl
+# UFSLviaIC/models_abl/*/*
+# !UFSLviaIC/models_abl/*/*finished*
