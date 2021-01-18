@@ -18,16 +18,30 @@ from torchvision.models import resnet18, resnet34, resnet50, vgg16_bn
 ##############################################################################################################
 
 
-class MiniImageNetIC(Dataset):
+# class MiniImageNetIC(Dataset):
 
-    def __init__(self, data_list, image_size=84):
+#     def __init__(self, data_list, image_size=84):
+#         self.data_list = data_list
+#         self.train_label = [one[1] for one in self.data_list]
+
+#         norm = transforms.Normalize(mean=[x / 255.0 for x in [120.39586422, 115.59361427, 104.54012653]],
+#                                     std=[x / 255.0 for x in [70.68188272, 68.27635443, 72.54505529]])
+#         self.transform = transforms.Compose([transforms.CenterCrop(size=image_size), transforms.ToTensor(), norm])
+#         self.transform2 = transforms.Compose([transforms.ToTensor()])
+#         pass
+class MiniImageNetIC(Dataset):
+    
+    def __init__(self, data_list, image_size=32):
         self.data_list = data_list
         self.train_label = [one[1] for one in self.data_list]
-
-        norm = transforms.Normalize(mean=[x / 255.0 for x in [120.39586422, 115.59361427, 104.54012653]],
-                                    std=[x / 255.0 for x in [70.68188272, 68.27635443, 72.54505529]])
-        self.transform = transforms.Compose([transforms.CenterCrop(size=image_size), transforms.ToTensor(), norm])
-        self.transform2 = transforms.Compose([transforms.ToTensor()])
+        normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
+                                         std= [x / 255.0 for x in [63.0, 62.1, 66.7]])
+        self.transform = transforms.Compose(
+                [transforms.ToTensor(), normalize]
+        )
+        self.transform2 =transforms.Compose(
+                [transforms.ToTensor()]
+        )
         pass
 
     def __len__(self):
@@ -172,7 +186,19 @@ class Runner(object):
 
     def load_model(self):
         if os.path.exists(Config.ic_dir):
-            self.ic_model.load_state_dict(torch.load(Config.ic_dir))
+            try:
+                self.ic_model.load_state_dict(torch.load(Config.ic_dir))
+                # self.ic_model  = torch.nn.DataParallel(self.ic_model , device_ids=[0,1])
+            except:
+                temp=torch.load(Config.ic_dir)
+                print('*'*60,list(temp.keys())[0])
+                # print('*'*60,type(list(temp.keys())[0]))
+
+                # print('*'*60,list(temp.keys())[0].replace('module','resnet'))
+                temp={'resnet.'+i:temp[i] for i in temp }
+                # temp={i.replace('module.',''):temp[i] for i in temp }
+                # print(temp,'*'*60)
+                self.ic_model.load_state_dict(temp)
             Tools.print("load ic model success from {}".format(Config.ic_dir))
         pass
 
@@ -194,9 +220,10 @@ class Runner(object):
                 feature_list.append([int(idx[i]), int(label[i]), int(cluster_id[i]),
                                      np.array(ic_out_logits[i].cpu().detach().numpy()),
                                      np.array(ic_out_l2norm[i].cpu().detach().numpy())])
-
+                temp=int(ic_out_l2norm[i].cpu().detach().numpy()[cluster_id[i]]*100)
+                
                 result_path = Tools.new_dir(os.path.join(Config.vis_dir, split, str(cluster_id[i])))
-                Image.fromarray(image_data[i]).save(os.path.join(result_path, "{}_{}.png".format(label[i], idx[i])))
+                Image.fromarray(image_data[i]).save(os.path.join(result_path, "{}_{}_{}.png".format(temp,label[i], idx[i])))
                 pass
             pass
 
@@ -228,19 +255,34 @@ class Config(object):
     # is_png = False
 
     # ic
+#####################################3miniImageNet_png
+    # ic_dir = "/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_model/3_resnet_34_64_512_1_2100_500_200_ic.pkl"
+    # ic_out_dim = 512
+    # vis_dir = Tools.new_dir("UFSLviaIC/IC/IC_result/3_resnet_34_64_512_1_2100_500_200")
+    # dataset='miniImageNet'
+    # data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
+    # if not os.path.exists(data_root):
+    #     data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
+    # data_root = os.path.join(data_root, "miniImageNet_png") if is_png else data_root
+    # Tools.print(data_root)
+##########################################tiered-imagenet
+    # ic_dir='/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_model/123_res34_head_1200_384_2048_conv4_100_5_1_288_ic_tiered.pkl'
+    # ic_out_dim = 2048
+    # vis_dir = Tools.new_dir("UFSLviaIC/IC/IC_result/123_res34_head_1200_384_2048_conv4_100_5_1_288_ic_tiered_score")
+    # dataset='tiered-imagenet'
+    # data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
+    # if not os.path.exists(data_root):
+    #     data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
+    # pass
+##########################################tiered-imagenet
+    ic_dir='/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/my_MN/models_mn/two_ic_ufsl_2net_res_sgd_acc_duli_CIFARFS/eval-res12_1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS.pkl'
     ic_out_dim = 512
-
-    ic_dir = "/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_model/3_resnet_34_64_512_1_2100_500_200_ic.pkl"
-
-    vis_dir = Tools.new_dir("UFSLviaIC/IC/IC_result/3_resnet_34_64_512_1_2100_500_200")
-    dataset='miniImageNet'
-    data_root = f'/home/ubuntu/Documents/hzh/ActiveLearning/data/{dataset}'
+    vis_dir = Tools.new_dir("UFSLviaIC/IC/IC_result/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS")
+    dataset='CIFARFS'
+    data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
     if not os.path.exists(data_root):
-        data_root = f'/home/ubuntu/Documents/hzh/ActiveLearning/data/{dataset}'
-    data_root = os.path.join(data_root, "miniImageNet_png") if is_png else data_root
-    Tools.print(data_root)
+        data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
     pass
-
 
 if __name__ == '__main__':
     runner = Runner()

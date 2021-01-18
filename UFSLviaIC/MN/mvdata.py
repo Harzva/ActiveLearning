@@ -1,8 +1,8 @@
 import shutil
 import os
 import glob
-# _CIFAR_CATEGORY_SPLITS_DIR ="/home/ubuntu/Documents/hzh/ActiveLearning/data/cifar-100-python/cifar-fs_splits"
-_CIFAR_CATEGORY_SPLITS_DIR='/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/splits/vinyals'
+# _CIFAR_CATEGORY_SPLITS_DIR ="/home/ubuntu/Dataset/Partition1/hzh/data/cifar-100-python/cifar-fs_splits"
+_CIFAR_CATEGORY_SPLITS_DIR='/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/splits/vinyals'
 
 # alphabet, character, rot = d['class'].split('/')
 # image_dir = os.path.join(OMNIGLOT_DATA_DIR, 'data', alphabet, character)
@@ -23,29 +23,29 @@ val_category_names =read_categories(
 test_category_names = read_categories(
     os.path.join(_CIFAR_CATEGORY_SPLITS_DIR, "test.txt")
 )
-data_path='/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/data/'
+data_path='/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/data/'
 for i in train_category_names:
     #Angelic/character01/rot000=i
     i=glob.glob(data_path+os.path.dirname(i)+'/*.png')
     for j in i
-    print(f"{i}",f"/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/train/{i[:-6]}")
+    print(f"{i}",f"/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/train/{i[:-6]}")
 
 
-    # shutil.copytree(f"{i}",f"/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/train/{os.path.dirname(i[:-6])}") 
+    # shutil.copytree(f"{i}",f"/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/train/{os.path.dirname(i[:-6])}") 
 
-#     # shutil.copytree(f"/home/ubuntu/Documents/hzh/ActiveLearning/data/cifar100/data/{i}",f"/home/ubuntu/Documents/hzh/ActiveLearning/data/CIFARFS/train/{i}") 
+#     # shutil.copytree(f"/home/ubuntu/Dataset/Partition1/hzh/data/cifar100/data/{i}",f"/home/ubuntu/Dataset/Partition1/hzh/data/CIFARFS/train/{i}") 
 #     #oldfile只能是文件夹，newfile可以是文件，也可以是目标目录
 # for i in train_category_names:
-#     shutil.copytree(f"/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/data/{i}",f"/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/val/{i}") 
+#     shutil.copytree(f"/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/data/{i}",f"/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/val/{i}") 
 #     #oldfile只能是文件夹，newfile可以是文件，也可以是目标目录
 # for i in train_category_names:
-#     shutil.copytree(f"/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/data/{i}",f"/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot/test/{i}") 
+#     shutil.copytree(f"/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/data/{i}",f"/home/ubuntu/Dataset/Partition1/hzh/data/omniglot/test/{i}") 
     #oldfile只能是文件夹，newfile可以是文件，也可以是目标目录
-# filename=os.listdir("/home/ubuntu/Documents/hzh/ActiveLearning/data/FC100") 
+# filename=os.listdir("/home/ubuntu/Dataset/Partition1/hzh/data/FC100") 
 # for i in filename:
 #     print(i)
-#     with open(f"/home/ubuntu/Documents/hzh/ActiveLearning/data/FC100/meta/{i}.txt","w") as f:
-#         classame=os.listdir(f"/home/ubuntu/Documents/hzh/ActiveLearning/data/FC100/{i}") 
+#     with open(f"/home/ubuntu/Dataset/Partition1/hzh/data/FC100/meta/{i}.txt","w") as f:
+#         classame=os.listdir(f"/home/ubuntu/Dataset/Partition1/hzh/data/FC100/{i}") 
 #         for j in classame:
 #             print(j)
 #             f.write(f'{j}\n')

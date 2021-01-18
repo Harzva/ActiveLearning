@@ -13,7 +13,7 @@ from alisuretool.Tools import Tools
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset
 from torchvision.models import resnet18, resnet34
-sys.path.append("../Common")
+# sys.path.append("../Common")
 from UFSLTool import MyTransforms, MyDataset, C4Net, Normalize, RunnerTool
 from UFSLTool import ResNet12Small, FSLEvalTool, EvalFeatureDataset
 
@@ -165,22 +165,22 @@ def final_eval(gpu_id, name, mn_checkpoint, dataset_name, is_conv_4,
     image_features = runner.get_features()
     test_tool_fsl = runner.get_test_tool(image_features=image_features)
 
-    # ways, shots = MyDataset.get_ways_shots(dataset_name=dataset_name, split=split)
+    ways, shots = MyDataset.get_ways_shots(dataset_name=dataset_name, split=split)
     # ways, shots = [5,20],[5]
-    # for index, way in enumerate(ways):
-    #     Tools.print("{}/{} way={}".format(index, len(ways), way))
-    #     m, pm = test_tool_fsl.eval(num_way=way, num_shot=1, episode_size=15, test_episode=test_episode, split=split)
-    #     Tools.print("way={},shot=1,acc={:.2f},con={:.2f}".format(way, m*100, pm*100), txt_path=config.log_file)
-    # for index, shot in enumerate(shots):
-    #     Tools.print("{}/{} shot={}".format(index, len(shots), shot))
-    #     m, pm = test_tool_fsl.eval(num_way=5, num_shot=shot, episode_size=15, test_episode=test_episode, split=split)
-    #     Tools.print("way=5,shot={},acc={:.2f},con={:.2f}".format(shot, m*100, pm*100), txt_path=config.log_file)
-    way_shots=[[5,1],[5,5],[20,1],[20,5]]
-    for index, way_shot in enumerate(way_shots):
-        way,shot=way_shot[0],way_shot[1]
-        Tools.print("{}/{} shot={}".format(index,len(way_shots),shot))
-        m, pm = test_tool_fsl.eval(num_way=way, num_shot=shot, episode_size=15, test_episode=test_episode, split=split)
-        Tools.print("way={},shot={},acc={:.2f},con={:.2f}".format(way,shot, m*100, pm*100), txt_path=config.log_file)
+    for index, way in enumerate(ways):
+        Tools.print("{}/{} way={}".format(index, len(ways), way))
+        m, pm = test_tool_fsl.eval(num_way=way, num_shot=1, episode_size=15, test_episode=test_episode, split=split)
+        Tools.print("way={},shot=1,acc={:.2f},con={:.2f}".format(way, m*100, pm*100), txt_path=config.log_file)
+    for index, shot in enumerate(shots):
+        Tools.print("{}/{} shot={}".format(index, len(shots), shot))
+        m, pm = test_tool_fsl.eval(num_way=5, num_shot=shot, episode_size=15, test_episode=test_episode, split=split)
+        Tools.print("way=5,shot={},acc={:.2f},con={:.2f}".format(shot, m*100, pm*100), txt_path=config.log_file)
+    # way_shots=[[5,1],[5,5]]
+    # for index, way_shot in enumerate(way_shots):
+    #     way,shot=way_shot[0],way_shot[1]
+    #     Tools.print("{}/{} shot={}".format(index,len(way_shots),shot))
+    #     m, pm = test_tool_fsl.eval(num_way=way, num_shot=shot, episode_size=15, test_episode=test_episode, split=split)
+    #     Tools.print("way={},shot={},acc={:.2f},con={:.2f}".format(way,shot, m*100, pm*100), txt_path=config.log_file)
 
     pass
 def select_eval(gpu_id, name, mn_checkpoint, dataset_name, is_conv_4,
@@ -212,34 +212,42 @@ def select_eval(gpu_id, name, mn_checkpoint, dataset_name, is_conv_4,
 #         shots = [1]
 #     else:
 #             raise Exception(".")
-def FC100_final_eval(gpu_id='0', result_dir="result_table"):
+def FC100_final_eval(gpu_id='0', result_dir="result"):
     dataset_name = MyDataset.dataset_name_FC100
     checkpoint_path = "/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/models_abl/{}/mn".format(dataset_name)
 
     param_list = [
-        {"name": "cluster_conv4", "is_conv_4": True,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "cluster", "0_cluster_conv4_300_64_5_1_100_100_png.pkl")},#
-        {"name": "css_conv4", "is_conv_4": True,'gpu':'1',
-         "mn": os.path.join(checkpoint_path, "css", "1_css_conv4_300_64_5_1_100_100_png.pkl")},#
-        {"name": "random_conv4", "is_conv_4": True,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "random", "0_random_conv4_300_64_5_1_100_100_png.pkl")},#
+        # {"name": "cluster_conv4", "is_conv_4": True,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "cluster", "0_cluster_conv4_300_64_5_1_100_100_png.pkl")},#
+        # {"name": "css_conv4", "is_conv_4": True,'gpu':'1',
+        #  "mn": os.path.join(checkpoint_path, "css", "1_css_conv4_300_64_5_1_100_100_png.pkl")},#
+        # {"name": "random_conv4", "is_conv_4": True,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "random", "0_random_conv4_300_64_5_1_100_100_png.pkl")},#
+        # {"name": "label_conv4", "is_conv_4": True,'gpu':'01',
+        #  "mn": os.path.join(checkpoint_path, "label", "2_400_64_5_1_200_100_png_mn_5way_1shot_FC100.pkl")},
+        # {"name": "ufsl_res34_conv4", "is_conv_4": True,'gpu':'1',
+        #  "mn": os.path.join(checkpoint_path, "ufsl", "1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_mn_5way_1shot_FC100.pkl")},
+
+
         {"name": "label_conv4", "is_conv_4": True,'gpu':'01',
-         "mn": os.path.join(checkpoint_path, "label", "2_400_64_5_1_200_100_png_mn_5way_1shot_FC100.pkl")},
+         "mn": os.path.join(checkpoint_path, "label", "3_FC100_32_conv4_400_5_1_aug1.pkl")},
         {"name": "ufsl_res34_conv4", "is_conv_4": True,'gpu':'1',
-         "mn": os.path.join(checkpoint_path, "ufsl", "1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_mn_5way_1shot_FC100.pkl")},
-
-
-        {"name": "cluster_res12", "is_conv_4": False,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "cluster", "0_cluster_res12_100_32_5_1_60_80_png.pkl")},#
-        {"name": "css_res12", "is_conv_4": False,'gpu':'1',
-         "mn": os.path.join(checkpoint_path, "css", "1_css_res12_100_32_5_1_60_80_png.pkl")},#
-        {"name": "random_res12", "is_conv_4": False,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "random", "0_random_res12_100_32_5_1_60_80_png.pkl")},#
+         "mn": os.path.join(checkpoint_path, "ufsl", "0_FC100_32_conv4_1800_64_5_1_400_200_1024_1_1.0_1.0_aug1_mn.pkl")},
         {"name": "label_res12", "is_conv_4": False,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "label", "fsl-(150)EP400_BS128_mn_5way_1shot_DR0.3_res12_FC100.pkl")},
-
+         "mn": os.path.join(checkpoint_path, "label", "2_FC100_32_res12_400_5_1_aug1.pkl")},
         {"name": "ufsl_res34head_res12", "is_conv_4": False,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "ufsl", "fsl-1080EP2100_BS128_ft500_200_mn_5w1s_DR0.1_res12_lr2_FC100_RGB.pkl")},
+         "mn": os.path.join(checkpoint_path, "ufsl", "3_FC100_32_resnet12_1600_64_5_1_400_200_1024_1_aug1_mn.pkl")},
+
+        # {"name": "cluster_res12", "is_conv_4": False,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "cluster", "0_cluster_res12_100_32_5_1_60_80_png.pkl")},#
+        # {"name": "css_res12", "is_conv_4": False,'gpu':'1',
+        #  "mn": os.path.join(checkpoint_path, "css", "1_css_res12_100_32_5_1_60_80_png.pkl")},#
+        # {"name": "random_res12", "is_conv_4": False,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "random", "0_random_res12_100_32_5_1_60_80_png.pkl")},#
+        # {"name": "label_res12", "is_conv_4": False,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "label", "fsl-(150)EP400_BS128_mn_5way_1shot_DR0.3_res12_FC100.pkl")},
+        # {"name": "ufsl_res34head_res12", "is_conv_4": False,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "ufsl", "fsl-1080EP2100_BS128_ft500_200_mn_5w1s_DR0.1_res12_lr2_FC100_RGB.pkl")},
     ]
         # "fsl-(150)EP400_BS128_mn_5way_1shot_DR0.3_res12_FC100.pkl"
         #  fsl-250EP600_BS64_ft200_100_mn_5w1s_DR0.2_res12_lr3_FC100_RGB.pkl
@@ -262,26 +270,26 @@ def CIFARFS_final_eval(gpu_id='0', result_dir="result"):
     checkpoint_path = "/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/models_abl/{}/mn".format(dataset_name)
 
     param_list = [
-        {"name": "cluster_conv4", "is_conv_4": True,'gpu':'1',
-         "mn": os.path.join(checkpoint_path, "cluster", "1_cluster_conv4_300_64_5_1_100_100_png.pkl")},#
-        {"name": "css_conv4", "is_conv_4": True,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "css", "0_css_conv4_300_64_5_1_100_100_png.pkl")},#
-        {"name": "random_conv4", "is_conv_4": True,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "random", "0_random_conv4_300_64_5_1_100_100_png.pkl")},#
-        {"name": "label_conv4", "is_conv_4": True,'gpu':'1',
-         "mn": os.path.join(checkpoint_path, "label", "2_400_64_5_1_200_100_png_mn_5way_1shot_CIFARFS.pkl")},
-        {"name": "ufsl_res34_conv4", "is_conv_4": True,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "ufsl", "1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_mn_5way_1shot_CIFARFS.pkl")},
+        # {"name": "cluster_conv4", "is_conv_4": True,'gpu':'1',
+        #  "mn": os.path.join(checkpoint_path, "cluster", "1_cluster_conv4_300_64_5_1_100_100_png.pkl")},#
+        # {"name": "css_conv4", "is_conv_4": True,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "css", "0_css_conv4_300_64_5_1_100_100_png.pkl")},#
+        # {"name": "random_conv4", "is_conv_4": True,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "random", "0_random_conv4_300_64_5_1_100_100_png.pkl")},#
+        # {"name": "label_conv4", "is_conv_4": True,'gpu':'1',
+        #  "mn": os.path.join(checkpoint_path, "label", "2_400_64_5_1_200_100_png_mn_5way_1shot_CIFARFS.pkl")},
+        # {"name": "ufsl_res34_conv4", "is_conv_4": True,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "ufsl", "1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_mn_5way_1shot_CIFARFS.pkl")},
 
 
-        {"name": "cluster_res12", "is_conv_4": False,'gpu':'1',
-         "mn": os.path.join(checkpoint_path, "cluster", "1_cluster_res12_100_32_5_1_60_80_png.pkl")},#
-        {"name": "css_res12", "is_conv_4": False,'gpu':'1',
-         "mn": os.path.join(checkpoint_path, "css", "1_css_res12_100_32_5_1_60_80_png.pkl")},#
-        {"name": "random_res12", "is_conv_4": False,'gpu':'0',
-         "mn": os.path.join(checkpoint_path, "random", "0_random_res12_100_32_5_1_60_80_png.pkl")},#
-        {"name": "label_res12", "is_conv_4": False,'gpu':'01',
-         "mn": os.path.join(checkpoint_path, "label", "fsl-(130)EP400_BS128_mn_5way_1shot_DR0.1_res12_CIFARFS.pkl")},
+        # {"name": "cluster_res12", "is_conv_4": False,'gpu':'1',
+        #  "mn": os.path.join(checkpoint_path, "cluster", "1_cluster_res12_100_32_5_1_60_80_png.pkl")},#
+        # {"name": "css_res12", "is_conv_4": False,'gpu':'1',
+        #  "mn": os.path.join(checkpoint_path, "css", "1_css_res12_100_32_5_1_60_80_png.pkl")},#
+        # {"name": "random_res12", "is_conv_4": False,'gpu':'0',
+        #  "mn": os.path.join(checkpoint_path, "random", "0_random_res12_100_32_5_1_60_80_png.pkl")},#
+        # {"name": "label_res12", "is_conv_4": False,'gpu':'01',
+        #  "mn": os.path.join(checkpoint_path, "label", "fsl-(130)EP400_BS128_mn_5way_1shot_DR0.1_res12_CIFARFS.pkl")},
         {"name": "ufsl_res34_res12", "is_conv_4": False,'gpu':'0',
          "mn": os.path.join(checkpoint_path, "ufsl", "1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_mn_5way_1shot_CIFARFS.pkl")},
     ]

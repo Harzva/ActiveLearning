@@ -342,7 +342,7 @@ class Config(object):
     model_name =f'EP{train_epoch}_BS{batch_size}_ft{first_epoch}_{t_epoch}_mn_{commit}'
 
 
-    data_root = f'/home/ubuntu/Documents/hzh/ActiveLearning/data/{dataset}'
+    data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
     if not os.path.exists(data_root):
         data_root = f'/home/test/Documents/hzh/ActiveLearning/data/{dataset}'
     

@@ -580,7 +580,7 @@ class Config(object):
     head="_head" if modify_head else ""
     model_name =f'EP{train_epoch}_BS{batch_size}_ft{first_epoch}_{t_epoch}_mn_{commit}'
 
-    data_root = '/home/ubuntu/Documents/hzh/ActiveLearning/data/omniglot'
+    data_root = '/home/ubuntu/Dataset/Partition1/hzh/data/omniglot'
     if not os.path.exists(data_root):
         data_root = '/home/test/Documents/hzh/ActiveLearning/data/omniglot'
 

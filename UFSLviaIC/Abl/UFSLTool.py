@@ -72,12 +72,12 @@ class MyDataset(object):
                 data_root = "F:\\data\\UFSL\\tiered-imagenet"
         elif dataset_name == MyDataset.dataset_name_CIFARFS:
             if "Linux" in platform.platform():
-                data_root = '/home/ubuntu/Documents/hzh/ActiveLearning/data/CIFARFS'
+                data_root = '/home/ubuntu/Dataset/Partition1/hzh/data/CIFARFS'
                 if not os.path.isdir(data_root):
                     data_root = '/home/test/Documents/hzh/ActiveLearning/data/CIFARFS'
         elif dataset_name == MyDataset.dataset_name_FC100:
             if "Linux" in platform.platform():
-                data_root = '/home/ubuntu/Documents/hzh/ActiveLearning/data/FC100'
+                data_root = '/home/ubuntu/Dataset/Partition1/hzh/data/FC100'
                 if not os.path.isdir(data_root):
                     data_root = '/home/test/Documents/hzh/ActiveLearning/data/FC100'
         else:
@@ -200,6 +200,7 @@ class MyTransforms(object):
 
     @classmethod
     def get_transform(cls, dataset_name, has_ic=True, is_fsl_simple=True, is_css=False):
+        normalize = transforms.Normalize([0.5071, 0.4867, 0.4408], [0.2675, 0.2565, 0.2761])
         normalize_1 = transforms.Normalize(mean=[x / 255.0 for x in [120.39586422, 115.59361427, 104.54012653]],
                                              std=[x / 255.0 for x in [70.68188272, 68.27635443, 72.54505529]])
         normalize_2 = transforms.Normalize(np.array([x / 255.0 for x in [125.3, 123.0, 113.9]]),
@@ -214,7 +215,7 @@ class MyTransforms(object):
             return cls.get_transform_CIFARFS(normalize_2, has_ic=has_ic,
                                                     is_fsl_simple=is_fsl_simple, is_css=is_css)
         elif dataset_name == MyDataset.dataset_name_FC100:
-            return cls.get_transform_CIFARFS(normalize_2, has_ic=has_ic,
+            return cls.get_transform_CIFARFS(normalize, has_ic=has_ic,
                                                     is_fsl_simple=is_fsl_simple, is_css=is_css)
         else:
             raise Exception("......")

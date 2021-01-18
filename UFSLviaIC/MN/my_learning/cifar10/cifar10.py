@@ -15,12 +15,12 @@ Tools.print("load feature encoder success from {}".format(b),txt_path=txt_path)
 #     [transforms.ToTensor(),
 #      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])#cifar-10-batches-py cifar-10-batches-py
 
-# trainset = torchvision.datasets.CIFAR10(root='/home/ubuntu/Documents/hzh/ActiveLearning/data/cifar-10-python', train=True,
+# trainset = torchvision.datasets.CIFAR10(root='/home/ubuntu/Dataset/Partition1/hzh/data/cifar-10-python', train=True,
 #                                         download=False, transform=transform)
 # trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,
 #                                           shuffle=True, num_workers=2)
 
-# testset = torchvision.datasets.CIFAR10(root='/home/ubuntu/Documents/hzh/ActiveLearning/data/cifar-10-python', train=False,
+# testset = torchvision.datasets.CIFAR10(root='/home/ubuntu/Dataset/Partition1/hzh/data/cifar-10-python', train=False,
 #                                        download=False, transform=transform)
 # testloader = torch.utils.data.DataLoader(testset, batch_size=4,
 #                                          shuffle=False, num_workers=2)

@@ -72,12 +72,12 @@ class MyDataset(object):
                 data_root = "F:\\data\\UFSL\\tiered-imagenet"
         elif dataset_name == MyDataset.dataset_name_CIFARFS:
             if "Linux" in platform.platform():
-                data_root = '/home/ubuntu/Documents/hzh/ActiveLearning/data/CIFARFS'
+                data_root = '/home/ubuntu/Dataset/Partition1/hzh/data/CIFARFS'
                 if not os.path.isdir(data_root):
                     data_root = '/home/test/Documents/hzh/ActiveLearning/data/CIFARFS'
         elif dataset_name == MyDataset.dataset_name_FC100:
             if "Linux" in platform.platform():
-                data_root = '/home/ubuntu/Documents/hzh/ActiveLearning/data/FC100'
+                data_root = '/home/ubuntu/Dataset/Partition1/hzh/data/FC100'
                 if not os.path.isdir(data_root):
                     data_root = '/home/test/Documents/hzh/ActiveLearning/data/FC100'
         else:

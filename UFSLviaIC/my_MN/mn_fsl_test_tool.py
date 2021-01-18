@@ -74,6 +74,7 @@ class ClassBalancedSamplerTest(Sampler):
             pass
 
         batches = [item for sublist in batches for item in sublist]
+        # print('*'*60,batches)
         return iter(batches)
 
     def __len__(self):
@@ -189,7 +190,7 @@ class DatasetTask(object):
 #         return DataLoader(dataset, batch_size=num_per_class * self.task.num_classes, sampler=sampler)
 
 #     pass
-class myDataset(Dataset):
+class myDataset(Dataset): 
 
     def __init__(self, task, split='train', transform=None, target_transform=None,Config=''):
         self.task = task
@@ -201,12 +202,12 @@ class myDataset(Dataset):
         self.Config=Config
         pass
 
-    def __len__(self):
+    def __len__(self):#len(myDataset())
         return len(self.image_roots)
 
     def __getitem__(self, idx):
         image = Image.open(self.image_roots[idx]).convert(self.Config.convert)
-        print('^'*60)
+        # print('^'*60)
         if self.transform is not None:
             image = self.transform(image)
 
@@ -340,7 +341,7 @@ class FSLTestTool(object):
 
     def _val(self, folders, sampler_test, all_episode):
         accuracies = []
-        pbar = tqdm(total=all_episode, ncols=70)
+        # pbar = tqdm(total=all_episode, ncols=70)
         # print(self.num_way, self.num_shot)
         for i in range(all_episode):
             total_rewards = 0
@@ -356,11 +357,11 @@ class FSLTestTool(object):
             #                                 num_per_class=1,sampler_test=sampler_test,shuffle=False)
             # batch_data_loader =myDataset(task,transform=self.transform,split="val",Config=self.Config).get_data_loader(
             #                                 num_per_class=3, sampler_test=sampler_test,shuffle=True)
-            num_per_class = 5 if self.num_shot> 1 else 3     #num_per_class=5  
+            # num_per_class = 5 if self.num_shot> 1 else 3     #num_per_class=5  
 
             sample_data_loader = myDataset.get_data_loader(task, self.num_shot, "train", sampler_test=sampler_test,
                                                               shuffle=False, transform=self.transform,Config=self.Config)                                             
-            batch_data_loader = myDataset.get_data_loader(task, num_per_class, "val", sampler_test=sampler_test,
+            batch_data_loader = myDataset.get_data_loader(task, 3, "val", sampler_test=sampler_test,
                                                              shuffle=True, transform=self.transform,Config=self.Config)
  
             samples, labels = sample_data_loader.__iter__().next()
@@ -379,7 +380,7 @@ class FSLTestTool(object):
             # tensor([1, 3, 0, 2, 4, 3, 1, 0, 2, 4, 4, 1, 3, 0, 2, 4, 2, 0, 3, 1, 2, 1, 4, 3,0])
             '''
             samples = self.to_cuda(samples)
-
+            print('#'*60,len(batch_data_loader),flush=True)
             for batches, batch_labels in batch_data_loader:#batches（5w1shot）3*5=15*3*32*32batches（5w2shot）5*5=25*3*32*32  #batch_labels batch_data_loader--batchsize 25  batch_data_loader：5
                 # results = self.model_fn(samples, self.to_cuda(batches))#10support  match 25 query>>>results：25*5
                 results = self.model_fn(samples, self.to_cuda(batches), num_way_test=self.num_way, num_shot=self.num_shot)
@@ -390,6 +391,9 @@ class FSLTestTool(object):
                 '''
                 _, predict_labels = torch.max(results.data, 1)
                 batch_size = batch_labels.shape[0]
+                print('^'*60,"batch_labels",batch_labels,flush=True)
+
+                
                 rewards = [1 if predict_labels[j].cpu() == batch_labels[j] else 0 for j in range(batch_size)]
                 # batch_labels:tensor([0, 4, 1, 2, 3, 4, 2, 0, 3, 1, 1, 2, 4, 0, 3])
                 # predi labels:tensor([4, 3, 3, 1, 2, 4, 3, 4, 1, 4, 4, 4, 4, 0, 0]
@@ -398,8 +402,8 @@ class FSLTestTool(object):
                 counter += batch_size
                 pass
             accuracies.append(total_rewards / 1.0 / counter)#counter一般为75
-            pbar.update(1)
-        pbar.close()
+        #     pbar.update(1)
+        # pbar.close()
         #    return np.mean(np.array(accuracies, dtype=np.float)), 
         m,pm=compute_confidence_interval(accuracies)[0],compute_confidence_interval(accuracies)[1]
         return m,pm

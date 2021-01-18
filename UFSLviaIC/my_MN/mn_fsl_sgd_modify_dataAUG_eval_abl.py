@@ -226,7 +226,7 @@ class Runner(object):
                             episode_size=Config.episode_size, test_episode=Config.test_episode,
                             transform=Config.transform_test,Config=Config)
 
-        # self.test_tool.val(episode=Config.train_epoch, is_print=True)
+        self.test_tool.val(epoch=Config.train_epoch, is_print=True)
         m,pm=self.test_tool.test(test_avg_num=1, epoch=Config.train_epoch, is_print=True)
         return m,pm
 
@@ -302,7 +302,7 @@ def parse_args():
     parser.add_argument('--fsl_backbone', '-fb',default='res12', help='fsl_backbone is c4')
     parser.add_argument('--num_way', '-w',type=int, default=5, help=' num_way=5')
     parser.add_argument('--num_shot', '-s',type=int, default=1, help=' num_shot=1')
-    parser.add_argument('--val', '-v',type=str, default='/home/ubuntu/Documents/hzh/ActivateLearning/UFSLviaIC/my_MN/models_mn/fsl_sgd_modify_FC100/eval-res12_Jan03_13-09-12_EP600_BS64_ft200_100_mn_5w1s_DR0.2_res12_lr3_FC100_RGB/fsl-250EP600_BS64_ft200_100_mn_5w1s_DR0.2_res12_lr3_FC100_RGB.pkl',help=' only val wegit _dir')
+    parser.add_argument('--val', '-v',type=str, default='/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/my_MN/models_mn/fsl_sgd_modify_FC100/eval-res12_Jan03_13-09-12_EP600_BS64_ft200_100_mn_5w1s_DR0.2_res12_lr3_FC100_RGB/fsl-250EP600_BS64_ft200_100_mn_5w1s_DR0.2_res12_lr3_FC100_RGB.pkl',help=' only val wegit _dir')
     # 
     parser.add_argument('--lr',type=int, default=3,help=' lr function id')
     parser.add_argument('--convert',type=str, default='RGB',help=' Image.open(x).convert(RGB)') 
@@ -402,9 +402,9 @@ class Config(object):
     model_name =f'EP{train_epoch}_BS{batch_size}_ft{first_epoch}_{t_epoch}_mn_{commit}'
 
 
-    data_root = f'/home/ubuntu/Documents/hzh/ActivateLearning/data/{dataset}'
+    data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
     if not os.path.exists(data_root):
-        data_root = f'/home/ubuntu/Documents/hzh/ActiveLearning/data/{dataset}'
+        data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
     
     _root_path = f"./models_mn/fsl_sgd_modify_{dataset}"
     # _root_path = "../models_rn/two_ic_ufsl_2net_res_sgd_acc_duli"
@@ -464,7 +464,7 @@ if __name__ == '__main__':
         ways = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         shots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50]
         ways = [5]
-        shots = [1]
+        shots = [15]
         # for index, way in enumerate(ways):
         #     Tools.print("{}/{} way={}".format(index, len(ways), way))
         #     m, pm = runner.eval_one(num_way=way, num_shot=1)

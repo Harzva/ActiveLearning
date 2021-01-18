@@ -607,7 +607,7 @@ class Config(object):
     model_name =f'EP{train_epoch}_BS{batch_size}_ft{first_epoch}_{t_epoch}_mn_{commit}'
     data_root = f'/home/ubuntu/Documents/hzh/ActivateLearning/data/{dataset}'
     if not os.path.exists(data_root):
-        data_root = f'/home/ubuntu/Documents/hzh/ActiveLearning/data/{dataset}'
+        data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
 
     _root_path = f"./models_mn/two_ic_ufsl_2net_res_sgd_acc_duli_{dataset}"
     # _root_path = "../models_rn/two_ic_ufsl_2net_res_sgd_acc_duli"
