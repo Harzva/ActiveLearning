@@ -21,7 +21,8 @@ data/*
 # UFSLviaIC/models_abl/*/*/*pkl
 # UFSLviaIC/models_abl/*/*
 # !UFSLviaIC/models_abl/*/*finished*
-
+plot_new/*
+scatter_vic/*
 */models*/*/*/*pkl
 */models*/*/*
 */*/models*/*/*/*pkl
