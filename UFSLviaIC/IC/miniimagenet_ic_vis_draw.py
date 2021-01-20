@@ -26,22 +26,30 @@ class Config(object):
     ################################################################################
     # ic_id_list = [4, 5, 28, 29, 8, 41, 26, 12, 19, 45, 46, 56, 65]
     # 29 ,19, 45,41, 26,12
-    # ic_id_list = [6,17,103,142,177,618,
-    #             522,238,590,1242,619,717,743,
-    #             685,403,479,538,424,434,780,
-    #               94,592,703,394,703,76,245,247]
+    ic_id_list = [6,17,103,142,177,618,
+                522,238,590,1242,619,717,743,
+                685,403,479,538,424,434,780,
+                  94,592,703,394,76,245,247]
     # ic_id_list=list(range(512))
-    ic_id_list = [155,39,44,54,56,77,80,84,105,189,188,79,71,290,163,166,177,209,450,503,210,122,267,379,300,380,504,505]
+    ############################################CIFARFS
+    # ic_id_list = [84,290,379,210,163,166,177,450,155,39,44,54,80,188,79,71,122,300,380]  
+    # ic_id_list = [84,290,379,210,163,166,177,450,44,155,39,188]    
+    ic_id_list=list(range(1024))
+
+    ############################################omniglot
+    # ic_id_list = [34,42,83,115,119,125,136,157,235,236,360,474]   
+    ic_id_list = [34,42,83,115,119,125,136,157,235,236,360,474,518,537,554,731,738,751,770,769,772,800,811,848,985,1020]   
     image_num_train = 10
     image_num_val = 5
     image_num_test = 5
     #
     # vis_root = f"/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_result/123_res34_head_1200_384_2048_conv4_100_5_1_288_ic_tiered"
-    vis_root = f'/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_result/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS'
+    # vis_root = f'/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_result/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS'
+    vis_root='/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_result/2_28_ICConv4_64_1024_1_1600_1000_300_ic_omniglot'
     # {image_num_train}_{image_num_val}_{image_num_test}{current_time}
     ################################################################################
 
-    image_size = 32
+    image_size = 42
     margin_image = 2
     margin_split = 16
 
@@ -161,8 +169,9 @@ if __name__ == '__main__':
         #                              i * (Config.image_size + Config.margin_image)))
         #     pass
         # pass
-        # font = ImageFont.truetype( '/usr/share/fonts/truetype/ubuntu/Ubuntu-RI.ttf',10)#设置字体
-        # draw = ImageDraw.Draw(im_result)
+        font = ImageFont.truetype( '/usr/share/fonts/truetype/ubuntu/Ubuntu-RI.ttf',10)#设置字体
+        draw = ImageDraw.Draw(im_result)
+        # draw.ink = 150+ 0* 256 + 0* 256 * 256#0(R) + 0(G) * 256 + 0(B) * 256 * 256
         # draw.text((10,(Config.image_size+Config.margin_image)*i), f'{i}',font=font)
         # draw.text((10,(Config.image_size+Config.margin_image)*i), f'{Config.ic_id_list[i]}',font=font)
 

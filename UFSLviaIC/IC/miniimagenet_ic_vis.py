@@ -29,20 +29,42 @@ from torchvision.models import resnet18, resnet34, resnet50, vgg16_bn
 #         self.transform = transforms.Compose([transforms.CenterCrop(size=image_size), transforms.ToTensor(), norm])
 #         self.transform2 = transforms.Compose([transforms.ToTensor()])
 #         pass
+# class MiniImageNetIC(Dataset):
+    
+#     def __init__(self, data_list, image_size=32):
+#         self.data_list = data_list
+#         self.train_label = [one[1] for one in self.data_list]
+#         normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
+#                                          std= [x / 255.0 for x in [63.0, 62.1, 66.7]])
+#         self.transform = transforms.Compose(
+#                 [transforms.ToTensor(), normalize]
+#         )
+#         self.transform2 =transforms.Compose(
+#                 [transforms.ToTensor()]
+#         )
+#         pass
 class MiniImageNetIC(Dataset):
     
-    def __init__(self, data_list, image_size=32):
+    def __init__(self, data_list, image_size=28):
         self.data_list = data_list
         self.train_label = [one[1] for one in self.data_list]
-        normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
-                                         std= [x / 255.0 for x in [63.0, 62.1, 66.7]])
+
+
+        normalize = transforms.Normalize(mean=[0.92206], std=[0.08426])
+        # self.transform = transforms.Compose([transforms.RandomRotation(30),
+        #                                     transforms.Resize(image_size),
+        #                                     transforms.RandomCrop(image_size, padding=4, fill=255),
+        #                                     transforms.ToTensor(), normalize])
+        # self.transform_test = transforms.Compose([transforms.Resize(image_size), transforms.ToTensor(), normalize])
+
         self.transform = transforms.Compose(
-                [transforms.ToTensor(), normalize]
+                [transforms.Resize(image_size),transforms.ToTensor(), normalize]
         )
         self.transform2 =transforms.Compose(
-                [transforms.ToTensor()]
+                [transforms.Resize(image_size),transforms.ToTensor()]
         )
         pass
+
 
     def __len__(self):
         return len(self.data_list)
@@ -119,41 +141,115 @@ class Normalize(nn.Module):
     pass
 
 
+# class ICResNet(nn.Module):
+
+#     def __init__(self, low_dim=512, modify_head=False, resnet=None, vggnet=None):
+#         super().__init__()
+#         self.is_res = True if resnet else False
+#         self.is_vgg = True if vggnet else False
+
+#         if self.is_res:
+#             self.resnet = resnet(num_classes=low_dim)
+#             if modify_head:
+#                 self.resnet.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+#                 pass
+#         elif self.is_vgg:
+#             self.vggnet = vggnet()
+#             self.avgpool = nn.AdaptiveAvgPool2d(1)
+#             self.fc = nn.Linear(512, low_dim)
+#             pass
+#         else:
+#             raise Exception("......")
+
+#         self.l2norm = Normalize(2)
+#         pass
+
+#     def forward(self, x):
+#         if self.is_res:
+#             out_logits = self.resnet(x)
+#         elif self.is_vgg:
+#             features = self.vggnet.features(x)
+#             features = self.avgpool(features)
+#             features = torch.flatten(features, 1)
+#             out_logits = self.fc(features)
+#             pass
+#         else:
+#             raise Exception("......")
+
+#         out_l2norm = self.l2norm(out_logits)
+#         return out_logits, out_l2norm
+
+#     def __call__(self, *args, **kwargs):
+#         return super().__call__(*args, **kwargs)
+
+#     pass
+class C4Net(nn.Module):
+    
+    def __init__(self, hid_dim, z_dim, has_norm=False):
+        super().__init__()
+        self.conv_block_1 = nn.Sequential(nn.Conv2d(3, hid_dim, 3, padding=1),
+                                          nn.BatchNorm2d(hid_dim), nn.ReLU(), nn.MaxPool2d(2))  # 41
+        self.conv_block_2 = nn.Sequential(nn.Conv2d(hid_dim, hid_dim, 3, padding=1),
+                                          nn.BatchNorm2d(hid_dim), nn.ReLU(), nn.MaxPool2d(2))  # 21
+        self.conv_block_3 = nn.Sequential(nn.Conv2d(hid_dim, hid_dim, 3, padding=1),
+                                          nn.BatchNorm2d(hid_dim), nn.ReLU(), nn.MaxPool2d(2))  # 10
+        self.conv_block_4 = nn.Sequential(nn.Conv2d(hid_dim, z_dim, 3, padding=1),
+                                          nn.BatchNorm2d(z_dim), nn.ReLU(), nn.MaxPool2d(2))  # 5
+
+        self.has_norm = has_norm
+        if self.has_norm:
+            self.norm = Normalize(2)
+        pass
+
+    def forward(self, x):
+        out = self.conv_block_1(x)
+        out = self.conv_block_2(out)
+        out = self.conv_block_3(out)
+        out = self.conv_block_4(out)
+
+        if self.has_norm:
+            out = out.view(out.shape[0], -1)
+            out = self.norm(out)
+        return out
+
+    def __call__(self, *args, **kwargs):
+        return super().__call__(*args, **kwargs)
+
+    pass
+
+
+def conv3x3(in_planes, out_planes, stride=1):
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+class EncoderC4(nn.Module):
+    
+    def __init__(self):
+        super().__init__()
+        self.encoder = C4Net(64, 64)
+        self.out_dim = 64
+        pass
+
+    def forward(self, x):
+        out = self.encoder(x)
+        out = torch.flatten(out, 1)
+        return out
+
+    def __call__(self, *args, **kwargs):
+        return super().__call__(*args, **kwargs)
+
+    pass
+
 class ICResNet(nn.Module):
 
-    def __init__(self, low_dim=512, modify_head=False, resnet=None, vggnet=None):
+    def __init__(self, encoder, low_dim=512):
         super().__init__()
-        self.is_res = True if resnet else False
-        self.is_vgg = True if vggnet else False
-
-        if self.is_res:
-            self.resnet = resnet(num_classes=low_dim)
-            if modify_head:
-                self.resnet.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
-                pass
-        elif self.is_vgg:
-            self.vggnet = vggnet()
-            self.avgpool = nn.AdaptiveAvgPool2d(1)
-            self.fc = nn.Linear(512, low_dim)
-            pass
-        else:
-            raise Exception("......")
-
+        self.encoder = encoder
+        self.fc = nn.Linear(self.encoder.out_dim, low_dim)
         self.l2norm = Normalize(2)
         pass
 
     def forward(self, x):
-        if self.is_res:
-            out_logits = self.resnet(x)
-        elif self.is_vgg:
-            features = self.vggnet.features(x)
-            features = self.avgpool(features)
-            features = torch.flatten(features, 1)
-            out_logits = self.fc(features)
-            pass
-        else:
-            raise Exception("......")
-
+        out = self.encoder(x)
+        out_logits = self.fc(out)
         out_l2norm = self.l2norm(out_logits)
         return out_logits, out_l2norm
 
@@ -176,8 +272,9 @@ class Runner(object):
         self.test_loader = DataLoader(MiniImageNetIC(self.data_test), Config.batch_size, False, num_workers=Config.num_workers)
 
         # model
-        self.ic_model = self.to_cuda(ICResNet(Config.ic_out_dim, modify_head=Config.modify_head,
-                                              resnet=Config.resnet, vggnet=Config.vggnet))
+        # self.ic_model = self.to_cuda(ICResNet(Config.ic_out_dim, modify_head=Config.modify_head,
+        #                                       resnet=Config.resnet, vggnet=Config.vggnet))
+        self.ic_model = self.to_cuda(ICResNet(low_dim=Config.ic_out_dim, encoder=Config.ic_net))
         pass
 
     @staticmethod
@@ -275,10 +372,20 @@ class Config(object):
     #     data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
     # pass
 ##########################################tiered-imagenet
-    ic_dir='/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/my_MN/models_mn/two_ic_ufsl_2net_res_sgd_acc_duli_CIFARFS/eval-res12_1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS.pkl'
-    ic_out_dim = 512
-    vis_dir = Tools.new_dir("UFSLviaIC/IC/IC_result/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS")
-    dataset='CIFARFS'
+    # ic_dir='/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/my_MN/models_mn/two_ic_ufsl_2net_res_sgd_acc_duli_CIFARFS/eval-res12_1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS.pkl'
+    # ic_out_dim = 512
+    # vis_dir = Tools.new_dir("UFSLviaIC/IC/IC_result/1_2100_64_5_1_500_200_512_1_1.0_1.0_head_png_res12_ic_CIFARFS")
+    # dataset='CIFARFS'
+    # data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
+    # if not os.path.exists(data_root):
+    #     data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
+    # pass
+##########################################omniglot
+    ic_dir='/home/ubuntu/Documents/hzh/ActiveLearning/UFSLviaIC/IC/IC_model/2_28_ICConv4_64_1024_1_1600_1000_300_ic_omniglot.pkl'
+    ic_out_dim = 1024
+    ic_net, net_name = EncoderC4(), "ICConv4"
+    vis_dir = Tools.new_dir("UFSLviaIC/IC/IC_result/2_28_ICConv4_64_1024_1_1600_1000_300_ic_omniglot")
+    dataset='omniglot_single'
     data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
     if not os.path.exists(data_root):
         data_root = f'/home/ubuntu/Dataset/Partition1/hzh/data/{dataset}'
